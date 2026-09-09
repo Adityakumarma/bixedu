@@ -1,0 +1,81 @@
+<ion-app>
+  <ion-split-pane contentId="main-content" when="md">
+    <!-- Sidebar / Drawer Menu -->
+    <ion-menu contentId="main-content" type="overlay">
+      <ion-header class="ion-no-border">
+        <ion-toolbar class="sidebar-header">
+          <div class="logo-wrapper">
+            <div class="logo-icon">B</div>
+            <div class="logo-text">
+              <span class="brand-name">BixEdu</span>
+              <span class="brand-badge">SaaS</span>
+            </div>
+          </div>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="sidebar-content">
+        <div class="centre-selector" *ngIf="currentUser$ | async as user">
+          <div class="centre-info">
+            <ion-icon name="business-outline"></ion-icon>
+            <span class="centre-name">{{ user.centreId ? 'Active Centre' : 'Main Admin' }}</span>
+          </div>
+        </div>
+
+        <ion-list class="nav-list" lines="none">
+          <ion-item
+            *ngFor="let item of navItems"
+            [routerLink]="[item.url]"
+            routerDirection="root"
+            [class.selected]="router.url.startsWith(item.url)"
+            class="nav-item">
+            <ion-icon slot="start" [name]="item.icon"></ion-icon>
+            <ion-label>{{ item.title }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+
+      <div class="sidebar-footer" *ngIf="currentUser$ | async as user">
+        <div class="user-profile">
+          <div class="avatar-circle">
+            {{ user.name ? user.name.charAt(0).toUpperCase() : 'U' }}
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ user.name || 'Admin User' }}</span>
+            <span class="user-role">{{ user.role }}</span>
+          </div>
+          <ion-button fill="clear" color="medium" (click)="logout()" title="Logout">
+            <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </ion-menu>
+
+    <!-- Main Content Area -->
+    <div class="ion-page" id="main-content">
+      <ion-header class="ion-no-border main-top-header">
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+          <ion-title class="app-title">BixEdu SaaS</ion-title>
+
+          <ion-buttons slot="end">
+            <ion-button routerLink="/notifications">
+              <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="logout()" class="mobile-logout">
+              <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="main-page-content">
+        <div class="page-viewport-wrapper">
+          <ion-router-outlet></ion-router-outlet>
+        </div>
+      </ion-content>
+    </div>
+  </ion-split-pane>
+</ion-app>
