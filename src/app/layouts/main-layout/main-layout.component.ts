@@ -59,6 +59,7 @@ export class MainLayoutComponent {
   public router = inject(Router);
 
   public currentUser$ = this.authService.currentUser$;
+  public currentCentre$ = this.authService.currentCentre$;
 
   public navItems: NavItem[] = [
     { title: 'Dashboard', url: '/dashboard', icon: 'grid-outline' },
@@ -75,7 +76,14 @@ export class MainLayoutComponent {
     { title: 'Settings', url: '/settings', icon: 'settings-outline' }
   ];
 
+  ngOnInit(): void {
+    if (this.authService.isAuthenticated) {
+      this.authService.getProfile().subscribe();
+    }
+  }
+
   logout(): void {
     this.authService.logout();
   }
 }
+

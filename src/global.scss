@@ -82,3 +82,14 @@ body {
     display: none !important;
   }
 }
+
+/* Ensure ion-input text is visible */
+ion-input {
+  --color: var(--bixedu-text-main);
+  --placeholder-color: var(--bixedu-text-muted);
+}
+
+/* Toolbar icon colors for contrast */
+.main-top-header ion-icon {
+  color: var(--bixedu-text-main);
+}

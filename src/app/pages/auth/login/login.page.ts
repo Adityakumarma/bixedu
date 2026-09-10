@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {
   IonContent,
   IonInput,
@@ -18,6 +18,7 @@ import { ToastService } from '../../../core/services/toast.service';
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule,
     IonContent,
     IonInput,
     IonButton,
@@ -71,7 +72,7 @@ import { ToastService } from '../../../core/services/toast.service';
           </form>
 
           <div class="login-footer">
-            <p>BixEdu Phase 1 — Multi-Tenant Auth Ready</p>
+            <p>Don't have an account? <a routerLink="/auth/register" class="register-link">Register Coaching Centre</a></p>
           </div>
         </div>
       </div>
@@ -168,8 +169,18 @@ import { ToastService } from '../../../core/services/toast.service';
     .login-footer {
       text-align: center;
       margin-top: 24px;
-      font-size: 12px;
-      color: #94a3b8;
+      font-size: 13px;
+      color: #64748b;
+
+      .register-link {
+        color: #4f46e5;
+        font-weight: 700;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
   `]
 })
@@ -204,3 +215,4 @@ export class LoginPage {
     });
   }
 }
+

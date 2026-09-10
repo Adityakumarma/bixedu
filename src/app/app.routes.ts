@@ -8,6 +8,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/auth/login/login.page').then((m) => m.LoginPage)
   },
   {
+    path: 'auth/register',
+    loadComponent: () => import('./pages/auth/register/register.page').then((m) => m.RegisterPage)
+  },
+  {
     path: '',
     component: MainLayoutComponent,
     canActivate: [authGuard],

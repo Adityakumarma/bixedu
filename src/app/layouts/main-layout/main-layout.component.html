@@ -15,10 +15,10 @@
       </ion-header>
 
       <ion-content class="sidebar-content">
-        <div class="centre-selector" *ngIf="currentUser$ | async as user">
+        <div class="centre-selector">
           <div class="centre-info">
             <ion-icon name="business-outline"></ion-icon>
-            <span class="centre-name">{{ user.centreId ? 'Active Centre' : 'Main Admin' }}</span>
+            <span class="centre-name">{{ (currentCentre$ | async)?.name || 'Coaching Centre' }}</span>
           </div>
         </div>
 
