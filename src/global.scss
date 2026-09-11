@@ -14,14 +14,16 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* Dark mode palette intentionally disabled — app uses fixed light theme */
+/* @import '@ionic/angular/css/palettes/dark.system.css'; */
 
 /* Import Google Font */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
   --ion-font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  
+
+  /* ── BixEdu design tokens ── */
   --bixedu-primary: #4f46e5;
   --bixedu-primary-hover: #4338ca;
   --bixedu-surface: #ffffff;
@@ -30,6 +32,37 @@
   --bixedu-border: #e2e8f0;
   --bixedu-text-main: #0f172a;
   --bixedu-text-muted: #64748b;
+
+  /* ── Force Ionic to always use light-mode colours ── */
+  --ion-background-color: #f8fafc;
+  --ion-background-color-rgb: 248, 250, 252;
+  --ion-text-color: #0f172a;
+  --ion-text-color-rgb: 15, 23, 42;
+
+  --ion-color-step-50:  #f8fafc;
+  --ion-color-step-100: #f1f5f9;
+  --ion-color-step-150: #e2e8f0;
+  --ion-color-step-200: #cbd5e1;
+  --ion-color-step-250: #94a3b8;
+  --ion-color-step-300: #64748b;
+  --ion-color-step-350: #475569;
+  --ion-color-step-400: #334155;
+  --ion-color-step-450: #1e293b;
+  --ion-color-step-500: #0f172a;
+
+  /* ion-toolbar */
+  --ion-toolbar-background: #ffffff;
+  --ion-toolbar-color: #0f172a;
+
+  /* ion-item */
+  --ion-item-background: #ffffff;
+  --ion-item-color: #0f172a;
+
+  /* ion-card */
+  --ion-card-background: #ffffff;
+
+  /* ion-modal */
+  --ion-backdrop-color: #0f172a;
 }
 
 body {
@@ -83,10 +116,52 @@ body {
   }
 }
 
-/* Ensure ion-input text is visible */
+/* ── Ionic component overrides — ensure visible text in light mode ── */
+
 ion-input {
   --color: var(--bixedu-text-main);
   --placeholder-color: var(--bixedu-text-muted);
+  --background: #ffffff;
+}
+
+ion-textarea {
+  --color: var(--bixedu-text-main);
+  --placeholder-color: var(--bixedu-text-muted);
+  --background: #ffffff;
+}
+
+ion-select {
+  --color: var(--bixedu-text-main);
+  --placeholder-color: var(--bixedu-text-muted);
+}
+
+ion-label {
+  color: var(--bixedu-text-main) !important;
+}
+
+ion-item {
+  --color: var(--bixedu-text-main);
+  --background: #ffffff;
+  --border-color: var(--bixedu-border);
+}
+
+ion-list {
+  background: #ffffff;
+}
+
+ion-content {
+  --background: var(--bixedu-bg-app);
+  --color: var(--bixedu-text-main);
+}
+
+ion-toolbar {
+  --background: #ffffff;
+  --color: var(--bixedu-text-main);
+  --border-color: var(--bixedu-border);
+}
+
+ion-title {
+  color: var(--bixedu-text-main);
 }
 
 /* Toolbar icon colors for contrast */

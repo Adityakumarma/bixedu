@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { StatCardComponent } from '../../shared/components/stat-card/stat-card.component';
 import { AuthService } from '../../core/services/auth.service';
+import { DashboardService, DashboardStats } from '../../core/services/dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -28,7 +29,7 @@ import { AuthService } from '../../core/services/auth.service';
       <div class="stats-grid">
         <app-stat-card
           title="Total Students"
-          value="0"
+          [value]="(stats?.totalStudents || 0).toString()"
           icon="people-outline"
           iconBg="rgba(79, 70, 229, 0.1)"
           iconColor="#4f46e5"
@@ -37,7 +38,7 @@ import { AuthService } from '../../core/services/auth.service';
 
         <app-stat-card
           title="Active Batches"
-          value="0"
+          [value]="(stats?.activeBatches || 0).toString()"
           icon="library-outline"
           iconBg="rgba(16, 185, 129, 0.1)"
           iconColor="#10b981"
@@ -45,17 +46,17 @@ import { AuthService } from '../../core/services/auth.service';
         </app-stat-card>
 
         <app-stat-card
-          title="Pending Fees"
-          value="₹0"
-          icon="wallet-outline"
-          iconBg="rgba(245, 158, 11, 0.1)"
-          iconColor="#f59e0b"
-          subtitle="Outstanding student payments">
+          title="Registered Parents"
+          [value]="(stats?.totalParents || 0).toString()"
+          icon="heart-outline"
+          iconBg="rgba(236, 72, 153, 0.1)"
+          iconColor="#ec4899"
+          subtitle="Linked parent profiles">
         </app-stat-card>
 
         <app-stat-card
           title="Teachers / Staff"
-          value="0"
+          [value]="(stats?.totalTeachers || 0).toString()"
           icon="person-add-outline"
           iconBg="rgba(239, 68, 68, 0.1)"
           iconColor="#ef4444"
@@ -77,13 +78,23 @@ import { AuthService } from '../../core/services/auth.service';
             </div>
           </a>
 
+          <a routerLink="/parents" class="action-card">
+            <div class="card-icon parents">
+              <ion-icon name="heart-outline"></ion-icon>
+            </div>
+            <div class="card-text">
+              <h4>Manage Parents</h4>
+              <p>Contact records & linked children</p>
+            </div>
+          </a>
+
           <a routerLink="/batches" class="action-card">
             <div class="card-icon batches">
               <ion-icon name="library-outline"></ion-icon>
             </div>
             <div class="card-text">
               <h4>Manage Batches</h4>
-              <p>Create courses, schedules, sub-batches</p>
+              <p>Create courses, schedules, enrollments</p>
             </div>
           </a>
 
@@ -198,6 +209,7 @@ import { AuthService } from '../../core/services/auth.service';
         flex-shrink: 0;
 
         &.students { background: rgba(79, 70, 229, 0.1); color: #4f46e5; }
+        &.parents { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
         &.batches { background: rgba(16, 185, 129, 0.1); color: #10b981; }
         &.attendance { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
         &.fees { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
@@ -221,10 +233,21 @@ import { AuthService } from '../../core/services/auth.service';
     }
   `]
 })
-export class DashboardPage {
+export class DashboardPage implements OnInit {
   private authService = inject(AuthService);
+  private dashboardService = inject(DashboardService);
 
   public currentUser$ = this.authService.currentUser$;
   public currentCentre$ = this.authService.currentCentre$;
-}
+  public stats: DashboardStats | null = null;
 
+  ngOnInit(): void {
+    this.dashboardService.getDashboardStats().subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.stats = res.data;
+        }
+      }
+    });
+  }
+}
