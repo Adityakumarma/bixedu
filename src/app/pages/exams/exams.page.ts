@@ -1,10 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
-import { SearchBarComponent } from '../../shared/components/search-bar/search-bar.component';
-import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
-import { ResponsiveTableComponent } from '../../shared/components/responsive-table/responsive-table.component';
-import { IonButton, IonIcon } from '@ionic/angular';
+import { ComingSoonComponent, ModuleFeature } from '../../shared/components/coming-soon/coming-soon.component';
 
 @Component({
   selector: 'app-exams',
@@ -12,37 +9,46 @@ import { IonButton, IonIcon } from '@ionic/angular';
   imports: [
     CommonModule,
     PageHeaderComponent,
-    SearchBarComponent,
-    EmptyStateComponent,
-    ResponsiveTableComponent,
-    IonButton,
-    IonIcon
+    ComingSoonComponent
   ],
   template: `
     <div class="exams-page">
       <app-page-header
-        title="Exams & Results"
-        subtitle="Schedule tests, enter marks, and publish report cards"
+        title="Exams & Performance"
+        subtitle="Schedule tests, enter subject marks, rank students, and share report cards"
         icon="school-outline">
-        <div actions>
-          <ion-button fill="solid" color="primary">
-            <ion-icon slot="start" name="document-text-outline"></ion-icon>
-            Schedule Test
-          </ion-button>
-        </div>
       </app-page-header>
 
-      <app-search-bar placeholder="Search tests by title or batch..."></app-search-bar>
-
-      <app-responsive-table>
-        <app-empty-state
-          title="No exam records found"
-          description="Schedule a test or upload marks to view performance reports."
-          icon="ribbon-outline"
-          actionLabel="Schedule First Test">
-        </app-empty-state>
-      </app-responsive-table>
+      <app-coming-soon
+        title="Exams, Marksheets & Ranking System"
+        description="Complete evaluation suite for mock tests, unit exams, subject marks entry, batch ranking, and student report card generation."
+        icon="school-outline"
+        [features]="features">
+      </app-coming-soon>
     </div>
   `
 })
-export class ExamsPage {}
+export class ExamsPage {
+  features: ModuleFeature[] = [
+    {
+      title: 'Exam Scheduling & Syllabus',
+      description: 'Create test schedules, assign max marks, and outline topics covered.',
+      icon: 'calendar-number-outline'
+    },
+    {
+      title: 'Bulk Marks Entry',
+      description: 'Fast grid interface for teachers to input scores per batch.',
+      icon: 'create-outline'
+    },
+    {
+      title: 'Batch Ranks & Top Performers',
+      description: 'Automatic percentile, batch rank, and subject score calculations.',
+      icon: 'trophy-outline'
+    },
+    {
+      title: 'Downloadable Report Cards',
+      description: 'Generate clean PDF student progress reports with parent sign-off.',
+      icon: 'document-text-outline'
+    }
+  ];
+}

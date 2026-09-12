@@ -17,7 +17,7 @@ import {
   IonTitle,
   IonButton,
   IonRouterOutlet,
-  IonAvatar
+  IonMenuToggle
 } from '@ionic/angular';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -49,7 +49,7 @@ interface NavItem {
     IonTitle,
     IonButton,
     IonRouterOutlet,
-    IonAvatar
+    IonMenuToggle
   ],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss']
@@ -63,18 +63,27 @@ export class MainLayoutComponent {
 
   public navItems: NavItem[] = [
     { title: 'Dashboard', url: '/dashboard', icon: 'grid-outline' },
-    { title: 'Students', url: '/students', icon: 'people-outline' },
-    { title: 'Parents', url: '/parents', icon: 'heart-outline' },
+    { title: 'Students', url: '/students', icon: 'people-outline', roles: ['SUPER_ADMIN', 'CENTRE_ADMIN'] },
+    { title: 'Parents', url: '/parents', icon: 'heart-outline', roles: ['SUPER_ADMIN', 'CENTRE_ADMIN'] },
     { title: 'Batches', url: '/batches', icon: 'library-outline' },
     { title: 'Attendance', url: '/attendance', icon: 'calendar-outline' },
-    { title: 'Fees', url: '/fees', icon: 'wallet-outline' },
-    { title: 'Exams & Results', url: '/exams', icon: 'school-outline' },
-    { title: 'Staff', url: '/staff', icon: 'person-add-outline' },
+    { title: 'Fees', url: '/fees', icon: 'wallet-outline', roles: ['SUPER_ADMIN', 'CENTRE_ADMIN'] },
+    { title: 'Exams & Results', url: '/exams', icon: 'school-outline', roles: ['SUPER_ADMIN', 'CENTRE_ADMIN'] },
+    { title: 'Staff', url: '/staff', icon: 'person-add-outline', roles: ['SUPER_ADMIN', 'CENTRE_ADMIN'] },
     { title: 'Notifications', url: '/notifications', icon: 'notifications-outline' },
-    { title: 'Reports & Analytics', url: '/reports', icon: 'bar-chart-outline' },
-    { title: 'Subscription', url: '/subscription', icon: 'card-outline' },
+    { title: 'Reports & Analytics', url: '/reports', icon: 'bar-chart-outline', roles: ['SUPER_ADMIN', 'CENTRE_ADMIN'] },
+    { title: 'Subscription', url: '/subscription', icon: 'card-outline', roles: ['SUPER_ADMIN', 'CENTRE_ADMIN'] },
     { title: 'Settings', url: '/settings', icon: 'settings-outline' }
   ];
+
+  public get filteredNavItems(): NavItem[] {
+    const user = this.authService.currentUserValue;
+    if (!user) return [];
+    return this.navItems.filter(item => {
+      if (!item.roles || item.roles.length === 0) return true;
+      return item.roles.includes(user.role);
+    });
+  }
 
   ngOnInit(): void {
     if (this.authService.isAuthenticated) {

@@ -6,7 +6,6 @@ import {
   IonContent,
   IonInput,
   IonButton,
-  IonIcon,
   IonSpinner
 } from '@ionic/angular';
 import { AuthService } from '../../../core/services/auth.service';
@@ -22,7 +21,6 @@ import { ToastService } from '../../../core/services/toast.service';
     IonContent,
     IonInput,
     IonButton,
-    IonIcon,
     IonSpinner
   ],
   template: `

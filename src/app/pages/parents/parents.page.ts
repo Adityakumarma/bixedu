@@ -17,7 +17,6 @@ import {
   IonSelectOption,
   IonTextarea,
   IonBadge,
-  IonChip,
   IonSpinner
 } from '@ionic/angular';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
@@ -60,7 +59,6 @@ import { Student } from '../../core/models/student.model';
     IonSelectOption,
     IonTextarea,
     IonBadge,
-    IonChip,
     IonSpinner
   ],
   template: `

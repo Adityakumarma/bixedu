@@ -54,4 +54,12 @@ export class BatchService {
   removeStudentFromBatch(batchId: string, studentId: string): Observable<ApiResponse<{ studentId: string; batchId: string }>> {
     return this.apiService.delete<{ studentId: string; batchId: string }>(`/batches/${batchId}/students/${studentId}`);
   }
+
+  assignTeacherToBatch(batchId: string, teacherId: string): Observable<ApiResponse<{ batchId: string; teacherId: string }>> {
+    return this.apiService.post<{ batchId: string; teacherId: string }>(`/batches/${batchId}/teachers`, { teacherId });
+  }
+
+  removeTeacherFromBatch(batchId: string, teacherId: string): Observable<ApiResponse<{ batchId: string; teacherId: string }>> {
+    return this.apiService.delete<{ batchId: string; teacherId: string }>(`/batches/${batchId}/teachers/${teacherId}`);
+  }
 }

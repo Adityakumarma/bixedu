@@ -6,9 +6,9 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <span class="status-badge" [ngClass]="type">
+    <span class="status-badge" [ngClass]="badgeType">
       <span class="badge-dot" *ngIf="showDot"></span>
-      {{ text || type }}
+      {{ text || badgeText }}
     </span>
   `,
   styles: [`
@@ -53,6 +53,16 @@ import { CommonModule } from '@angular/common';
 })
 export class StatusBadgeComponent {
   @Input() type: string = 'info';
+  @Input() status?: string;
   @Input() text?: string;
   @Input() showDot: boolean = true;
+
+  get badgeType(): string {
+    const val = (this.status || this.type || 'info').toLowerCase();
+    return val;
+  }
+
+  get badgeText(): string {
+    return this.status || this.type;
+  }
 }

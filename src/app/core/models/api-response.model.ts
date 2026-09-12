@@ -4,3 +4,15 @@ export interface ApiResponse<T = any> {
   data?: T;
   timestamp?: string;
 }
+
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface PaginatedApiResponse<T = any> extends ApiResponse<T[]> {
+  pagination?: PaginationMeta;
+}
+

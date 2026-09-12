@@ -11,8 +11,25 @@ export class ApiService {
   private http = inject(HttpClient);
   private baseUrl = environment.apiUrl;
 
-  get<T>(endpoint: string, params?: HttpParams): Observable<ApiResponse<T>> {
-    return this.http.get<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, { params });
+  get<T>(endpoint: string, params?: HttpParams | { [param: string]: any }): Observable<ApiResponse<T>> {
+    let httpParams: HttpParams | undefined;
+
+    if (params) {
+      if (params instanceof HttpParams) {
+        httpParams = params;
+      } else {
+        let p = new HttpParams();
+        Object.keys(params).forEach((key) => {
+          const val = params[key];
+          if (val !== undefined && val !== null && val !== '') {
+            p = p.set(key, val.toString());
+          }
+        });
+        httpParams = p;
+      }
+    }
+
+    return this.http.get<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, { params: httpParams });
   }
 
   post<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
@@ -21,6 +38,10 @@ export class ApiService {
 
   put<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
     return this.http.put<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body);
+  }
+
+  patch<T>(endpoint: string, body: any): Observable<ApiResponse<T>> {
+    return this.http.patch<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body);
   }
 
   delete<T>(endpoint: string): Observable<ApiResponse<T>> {

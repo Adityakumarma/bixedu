@@ -28,9 +28,11 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 import { BatchService } from '../../core/services/batch.service';
 import { StudentService } from '../../core/services/student.service';
+import { StaffService } from '../../core/services/staff.service';
 import { ToastService } from '../../core/services/toast.service';
 import { Batch } from '../../core/models/batch.model';
 import { Student } from '../../core/models/student.model';
+import { Staff } from '../../core/models/staff.model';
 
 @Component({
   selector: 'app-batches',
@@ -402,6 +404,37 @@ import { Student } from '../../core/models/student.model';
               </div>
             </div>
 
+            <!-- Assigned Teachers Section -->
+            <div class="assign-student-box">
+              <h4 class="section-title">Assigned Faculty / Teachers</h4>
+              <div class="assign-form-row">
+                <ion-item fill="outline" class="select-item" style="flex: 1;">
+                  <ion-label position="stacked">Select Faculty Member</ion-label>
+                  <ion-select [(ngModel)]="selectedTeacherId" interface="popover" placeholder="Choose teacher">
+                    <ion-select-option *ngFor="let staff of availableStaff" [value]="getStaffUserId(staff)">
+                      {{ staff.name }} ({{ staff.designation || 'Faculty' }})
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+                <ion-button
+                  color="success"
+                  [disabled]="!selectedTeacherId || assigningTeacher"
+                  (click)="assignTeacher()">
+                  <ion-spinner *ngIf="assigningTeacher" name="crescent" slot="start"></ion-spinner>
+                  <ion-icon name="person-add-outline" slot="start" *ngIf="!assigningTeacher"></ion-icon>
+                  Assign Teacher
+                </ion-button>
+              </div>
+
+              <div class="teachers-list-sub" *ngIf="selectedBatch.teacherIds && selectedBatch.teacherIds.length > 0" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+                <div class="teacher-pill-item" *ngFor="let t of selectedBatch.teacherIds" style="display: flex; align-items: center; gap: 6px; background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700;">
+                  <ion-icon name="person-outline"></ion-icon>
+                  <span>{{ getTeacherName(t) }}</span>
+                  <ion-icon name="close-circle" style="cursor: pointer; font-size: 16px; color: #ef4444;" (click)="removeTeacher(getTeacherId(t))"></ion-icon>
+                </div>
+              </div>
+            </div>
+
             <!-- Assigned Students Table -->
             <div class="students-section">
               <h4 class="section-title">Enrolled Students ({{ selectedBatch.students?.length || 0 }})</h4>
@@ -770,18 +803,22 @@ import { Student } from '../../core/models/student.model';
 export class BatchesPage implements OnInit {
   private batchService = inject(BatchService);
   private studentService = inject(StudentService);
+  private staffService = inject(StaffService);
   private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
 
   batches: Batch[] = [];
   unassignedStudents: Student[] = [];
+  availableStaff: Staff[] = [];
   loading = true;
   submitting = false;
   assigning = false;
+  assigningTeacher = false;
 
   searchQuery = '';
   selectedStatus = '';
   studentToAssign = '';
+  selectedTeacherId = '';
 
   pagination = {
     page: 1,
@@ -809,6 +846,7 @@ export class BatchesPage implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.loadBatches();
+    this.loadStaffList();
   }
 
   initForm(): void {
@@ -992,6 +1030,75 @@ export class BatchesPage implements OnInit {
         this.toastService.error(err.error?.message || 'Failed to assign student');
       }
     });
+  }
+
+  loadStaffList(): void {
+    this.staffService.getStaffList({ limit: 100, status: 'ACTIVE' }).subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.availableStaff = res.data;
+        }
+      }
+    });
+  }
+
+  assignTeacher(): void {
+    if (!this.selectedBatch || !this.selectedTeacherId) return;
+
+    this.assigningTeacher = true;
+    this.batchService.assignTeacherToBatch(this.selectedBatch._id, this.selectedTeacherId).subscribe({
+      next: (res) => {
+        this.assigningTeacher = false;
+        if (res.success) {
+          this.toastService.success('Teacher assigned to batch successfully');
+          this.selectedTeacherId = '';
+          this.viewDetail(this.selectedBatch!);
+          this.loadBatches();
+        }
+      },
+      error: (err) => {
+        this.assigningTeacher = false;
+        this.toastService.error(err.error?.message || 'Failed to assign teacher');
+      }
+    });
+  }
+
+  removeTeacher(teacherId: string): void {
+    if (!this.selectedBatch || !teacherId) return;
+
+    this.batchService.removeTeacherFromBatch(this.selectedBatch._id, teacherId).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.toastService.success('Teacher removed from batch');
+          this.viewDetail(this.selectedBatch!);
+          this.loadBatches();
+        }
+      },
+      error: (err) => {
+        this.toastService.error(err.error?.message || 'Failed to remove teacher');
+      }
+    });
+  }
+
+  getTeacherName(teacherObj: any): string {
+    if (!teacherObj) return 'Teacher';
+    if (typeof teacherObj === 'string') {
+      const match = this.availableStaff.find(s => (s.userId as any)?._id === teacherObj || s.userId === teacherObj);
+      return match ? match.name : 'Teacher';
+    }
+    return teacherObj.name || 'Teacher';
+  }
+
+  getTeacherId(teacherObj: any): string {
+    if (!teacherObj) return '';
+    if (typeof teacherObj === 'string') return teacherObj;
+    return teacherObj._id || teacherObj.id || '';
+  }
+
+  getStaffUserId(staff: Staff): string {
+    if (!staff || !staff.userId) return '';
+    if (typeof staff.userId === 'string') return staff.userId;
+    return (staff.userId as any)._id || (staff.userId as any).id || '';
   }
 
   removeStudent(student: Student): void {

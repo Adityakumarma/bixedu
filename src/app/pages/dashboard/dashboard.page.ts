@@ -7,6 +7,8 @@ import { StatCardComponent } from '../../shared/components/stat-card/stat-card.c
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardService, DashboardStats } from '../../core/services/dashboard.service';
 
+import { AttendanceService } from '../../core/services/attendance.service';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -46,21 +48,21 @@ import { DashboardService, DashboardStats } from '../../core/services/dashboard.
         </app-stat-card>
 
         <app-stat-card
-          title="Registered Parents"
-          [value]="(stats?.totalParents || 0).toString()"
-          icon="heart-outline"
-          iconBg="rgba(236, 72, 153, 0.1)"
-          iconColor="#ec4899"
-          subtitle="Linked parent profiles">
-        </app-stat-card>
-
-        <app-stat-card
-          title="Teachers / Staff"
+          title="Teachers & Staff"
           [value]="(stats?.totalTeachers || 0).toString()"
           icon="person-add-outline"
           iconBg="rgba(239, 68, 68, 0.1)"
           iconColor="#ef4444"
           subtitle="Faculty members">
+        </app-stat-card>
+
+        <app-stat-card
+          title="Today's Attendance Rate"
+          [value]="todayAttendanceRate + '%'"
+          icon="checkmark-done-circle-outline"
+          iconBg="rgba(245, 158, 11, 0.1)"
+          iconColor="#f59e0b"
+          subtitle="Overall student presence">
         </app-stat-card>
       </div>
 
@@ -98,6 +100,16 @@ import { DashboardService, DashboardStats } from '../../core/services/dashboard.
             </div>
           </a>
 
+          <a routerLink="/staff" class="action-card">
+            <div class="card-icon staff" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+              <ion-icon name="person-add-outline"></ion-icon>
+            </div>
+            <div class="card-text">
+              <h4>Faculty & Staff</h4>
+              <p>Teachers directory & batch assignments</p>
+            </div>
+          </a>
+
           <a routerLink="/attendance" class="action-card">
             <div class="card-icon attendance">
               <ion-icon name="calendar-outline"></ion-icon>
@@ -105,16 +117,6 @@ import { DashboardService, DashboardStats } from '../../core/services/dashboard.
             <div class="card-text">
               <h4>Attendance</h4>
               <p>Mark daily presence & view logs</p>
-            </div>
-          </a>
-
-          <a routerLink="/fees" class="action-card">
-            <div class="card-icon fees">
-              <ion-icon name="wallet-outline"></ion-icon>
-            </div>
-            <div class="card-text">
-              <h4>Fee Receipts</h4>
-              <p>Record payments & send reminders</p>
             </div>
           </a>
 
@@ -236,16 +238,26 @@ import { DashboardService, DashboardStats } from '../../core/services/dashboard.
 export class DashboardPage implements OnInit {
   private authService = inject(AuthService);
   private dashboardService = inject(DashboardService);
+  private attendanceService = inject(AttendanceService);
 
   public currentUser$ = this.authService.currentUser$;
   public currentCentre$ = this.authService.currentCentre$;
   public stats: DashboardStats | null = null;
+  public todayAttendanceRate: number = 0;
 
   ngOnInit(): void {
     this.dashboardService.getDashboardStats().subscribe({
       next: (res) => {
         if (res.success && res.data) {
           this.stats = res.data;
+        }
+      }
+    });
+
+    this.attendanceService.getAttendanceStats().subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.todayAttendanceRate = res.data.attendanceRate || 0;
         }
       }
     });

@@ -23,15 +23,16 @@
         </div>
 
         <ion-list class="nav-list" lines="none">
-          <ion-item
-            *ngFor="let item of navItems"
-            [routerLink]="[item.url]"
-            routerDirection="root"
-            [class.selected]="router.url.startsWith(item.url)"
-            class="nav-item">
-            <ion-icon slot="start" [name]="item.icon"></ion-icon>
-            <ion-label>{{ item.title }}</ion-label>
-          </ion-item>
+          <ion-menu-toggle auto-hide="false" *ngFor="let item of filteredNavItems">
+            <ion-item
+              [routerLink]="[item.url]"
+              routerDirection="root"
+              [class.selected]="router.url.startsWith(item.url)"
+              class="nav-item">
+              <ion-icon slot="start" [name]="item.icon"></ion-icon>
+              <ion-label>{{ item.title }}</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
         </ion-list>
       </ion-content>
 
